@@ -6,14 +6,14 @@ namespace ModeloOrganizacional.Controllers
 {
     public class MenuController : Controller
     {
-        private readonly ILogger<MenuController> _logger;
+        private readonly ModeloOrganizacionalContext _context;
 
-        public MenuController(ILogger<MenuController> logger)
+        public MenuController(ModeloOrganizacionalContext context)
         {
-            _logger = logger;
+            _context = context;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             return View();
         }
