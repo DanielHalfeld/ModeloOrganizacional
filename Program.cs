@@ -1,8 +1,11 @@
+using ModeloOrganizacional.Data;
+using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-
+var connectionString = builder.Configuration.GetConnectionString("ModeloOrganizacionalDbConnection");
+builder.Services.AddDbContext<ModeloOrganizacionalContext>(options => options.UseSqlServer(connectionString));
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

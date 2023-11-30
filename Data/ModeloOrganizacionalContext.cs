@@ -6,7 +6,6 @@ namespace ModeloOrganizacional.Data
     public class ModeloOrganizacionalContext : DbContext
     {
         public ModeloOrganizacionalContext(DbContextOptions<ModeloOrganizacionalContext> options) : base(options) { }
-        public DbSet<Usuarios> Usuarios { get; set; }
-
+        public DbSet<Topicos> Topicos { get; set; }
     }
 }
