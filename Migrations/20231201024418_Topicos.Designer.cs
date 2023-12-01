@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ModeloOrganizacional.Data;
 
@@ -11,9 +12,11 @@ using ModeloOrganizacional.Data;
 namespace ModeloOrganizacional.Migrations
 {
     [DbContext(typeof(ModeloOrganizacionalContext))]
-    partial class ModeloOrganizacionalContextModelSnapshot : ModelSnapshot
+    [Migration("20231201024418_Topicos")]
+    partial class Topicos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

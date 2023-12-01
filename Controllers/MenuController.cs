@@ -3,12 +3,14 @@ using ModeloOrganizacional.Models;
 using System.Diagnostics;
 using ModeloOrganizacional.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace ModeloOrganizacional.Controllers
 {
     public class MenuController : Controller
     {
         private readonly ModeloOrganizacionalContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
         public MenuController(ModeloOrganizacionalContext context)
         {
@@ -30,6 +32,8 @@ namespace ModeloOrganizacional.Controllers
             {
                 if (ModelState.IsValid)
                 {
+                    var user = await _userManager.GetUserAsync(User);
+                    topico.UsuarioId = user.Id;
                     _context.Add(topico);
                     await _context.SaveChangesAsync();
                     return RedirectToAction("Index");
