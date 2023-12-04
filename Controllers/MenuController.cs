@@ -4,44 +4,69 @@ using System.Diagnostics;
 using ModeloOrganizacional.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
+using Newtonsoft.Json;
 
 namespace ModeloOrganizacional.Controllers
 {
+    [Authorize]
     public class MenuController : Controller
     {
-        private readonly ModeloOrganizacionalContext _context;
+        private readonly ILogger<MenuController> _logger;
+        private readonly ContasContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
-
-        public MenuController(ModeloOrganizacionalContext context)
+        public MenuController(ContasContext context, UserManager<ApplicationUser> userManager, ILogger<MenuController> logger)
         {
             _context = context;
+            _userManager = userManager;
+            _logger = logger;
         }
 
         public async Task<IActionResult> Index()
         {
-            return View();
+            return View(await _context.Topicos.OrderBy(i => i.Titulo).ToListAsync());
         }
-        public ActionResult Create()
+        
+
+        public IActionResult Create()
         {
             return View();
         }
 
-        public async Task<IActionResult> Create([Bind("Titulo","Descricao")]Topicos topico)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("Titulo", "Descricao")] Topicos topico)
         {
+            if (!User.Identity.IsAuthenticated)
+            {
+                _logger.LogInformation("User is not authenticated");
+                return Challenge(); // Returns a 401 Unauthorized response
+            }
             try
             {
-                if (ModelState.IsValid)
-                {
+
                     var user = await _userManager.GetUserAsync(User);
-                    topico.UsuarioId = user.Id;
+
+                    topico.ApplicationUserId = user.Id;
+                    topico.ApplicationUser = user;
                     _context.Add(topico);
+
                     await _context.SaveChangesAsync();
+
                     return RedirectToAction("Index");
-                }
+
             }
-            catch (DbUpdateException)
+            catch (DbUpdateException ex)
             {
+                // Log the exception message
+                Console.WriteLine(ex.Message);
                 ModelState.AddModelError("", "Não foi possível cadastrar o tópico");
+            }
+            catch (Exception ex)
+            {
+                // Log the exception message
+                Console.WriteLine(ex.Message);
+                throw;
             }
             return View(topico);
         }
@@ -51,7 +76,7 @@ namespace ModeloOrganizacional.Controllers
             {
                 return NotFound();
             }
-            var topico = await _context.Topicos.SingleOrDefaultAsync(i=>i.Id==id);
+            var topico = await _context.Topicos.SingleOrDefaultAsync(i => i.Id == id);
             if (topico == null)
             {
                 return NotFound();
@@ -60,9 +85,9 @@ namespace ModeloOrganizacional.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long? id,[Bind("Id","Titulo", "Descricao")] Topicos topico)
+        public async Task<IActionResult> Edit(long? id, [Bind("Id", "Titulo", "Descricao")] Topicos topico)
         {
-            if(id != topico.Id)
+            if (id != topico.Id)
             {
                 return NotFound();
             }
@@ -75,7 +100,7 @@ namespace ModeloOrganizacional.Controllers
                 }
                 catch
                 {
-                    if(!TopicosExists(topico.Id))
+                    if (!TopicosExists(topico.Id))
                     {
                         return NotFound();
                     }
@@ -96,7 +121,7 @@ namespace ModeloOrganizacional.Controllers
 
         public async Task<IActionResult> Details(long? id)
         {
-            if(id == null)
+            if (id == null)
             {
                 return NotFound();
             }
@@ -120,7 +145,7 @@ namespace ModeloOrganizacional.Controllers
             }
             return View(topico);
         }
-        [HttpPost,ActionName("Delete")]
+        [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long? id)
         {

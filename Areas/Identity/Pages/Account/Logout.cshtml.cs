@@ -24,19 +24,12 @@ namespace ModeloOrganizacional.Areas.Identity.Pages.Account
             _logger = logger;
         }
 
-        public async Task<IActionResult> OnPost(string returnUrl = "/Menu")
+        public async Task<IActionResult> OnPost()
         {
             await _signInManager.SignOutAsync();
-            _logger.LogInformation("User logged out.");
-            if (returnUrl != null)
-            {
-                return LocalRedirect(returnUrl);
-            }
-            else
-            {
-                // Redirect to the Menu page after logout
-                return LocalRedirect("/Menu");
-            }
+            _logger.LogInformation("Usuário deslogou.");
+            return LocalRedirect("/Menu");
+
         }
     }
 }
