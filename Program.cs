@@ -1,11 +1,34 @@
 using ModeloOrganizacional.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using ModeloOrganizacional.Models;
+using Microsoft.Extensions.DependencyInjection;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-var connectionString = builder.Configuration.GetConnectionString("ModeloOrganizacionalDbConnection");
-builder.Services.AddDbContext<ModeloOrganizacionalContext>(options => options.UseSqlServer(connectionString));
+
+var connectionString = builder.Configuration.GetConnectionString("ContasDbConnection");
+builder.Services.AddDbContext<ContasContext>(options => options.UseSqlServer(connectionString));
+
+builder.Services.AddLogging(config =>
+{
+    config.AddDebug(); // Log to debug (debug window in Visual Studio or any debugger attached)
+    config.AddConsole(); // Log to console (colored!)
+});
+
+builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
+{
+    options.SignIn.RequireConfirmedAccount = false;
+
+
+    options.Password.RequireDigit = false;
+    options.Password.RequiredLength = 0;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequireLowercase = false;
+}).AddEntityFrameworkStores<ContasContext>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -23,8 +46,10 @@ app.UseRouting();
 
 app.UseAuthorization();
 
+app.MapRazorPages();
+
 app.MapControllerRoute(
-    name: "Menu",
+    name: "default",
     pattern: "{controller=Menu}/{action=Index}/{id?}");
 
 app.Run();

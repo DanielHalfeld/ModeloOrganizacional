@@ -10,3 +10,17 @@
 <p>
     <a asp-action="Create">Novo</a>
 </p>
+<div class="container">
+    @Html.DisplayNameFor(model => model.Titulo)
+</div>
+
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Titulo)
+            </td>
+        </tr>
+}
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
