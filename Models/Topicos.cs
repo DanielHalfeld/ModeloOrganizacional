@@ -17,5 +17,7 @@ namespace ModeloOrganizacional.Models
         public string ApplicationUserId { get; set; }
 
         public virtual ApplicationUser ApplicationUser { get; set; }
+
+        public DateTime DataCriacao { get; set; }
     }
 }

@@ -12,7 +12,7 @@ using ModeloOrganizacional.Data;
 namespace ModeloOrganizacional.Migrations
 {
     [DbContext(typeof(ContasContext))]
-    [Migration("20231204051718_inicial")]
+    [Migration("20231205021156_inicial")]
     partial class inicial
     {
         /// <inheritdoc />
@@ -238,6 +238,9 @@ namespace ModeloOrganizacional.Migrations
                     b.Property<string>("ApplicationUserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("DataCriacao")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Descricao")
                         .IsRequired()
